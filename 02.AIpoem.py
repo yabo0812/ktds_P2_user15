@@ -19,10 +19,10 @@ response = openai.chat.completions.create(
     temperature=0.9,
     max_tokens=500,
     messages=[
-         {"role": "system", "content": "You are a Poem."},
+        {"role": "system", "content": "You are a AI Poem generator."},
         {"role": "user", "content": "시의 주제는 "+ subject },
         {"role": "user", "content": "시의 내용은 "+ centent },
-        {"role": "user", "content": "시를 지어줘"}
+        {"role": "user", "content": "이 내용으로 시를 써줘."}
     ]
 )
 

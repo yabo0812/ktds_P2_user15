@@ -1,0 +1,16 @@
+[project]
+name = "ktds-p2-user15"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bs4>=0.0.2",
+    "dotenv>=0.9.9",
+    "langchain>=0.3.26",
+    "langfuse>=3.0.8",
+    "langgraph>=0.5.0",
+    "openai>=1.93.0",
+    "python-dotenv>=1.1.1",
+    "streamlit>=1.46.1",
+]
