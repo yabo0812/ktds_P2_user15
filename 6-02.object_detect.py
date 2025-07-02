@@ -66,13 +66,21 @@ def create_bounding_box(image_path, detection_data):
     
     draw = ImageDraw.Draw(image) # 비트맵으로 형변환
 
+    # 폰트 설정 (arial.ttf 폰트가 없을 경우 기본 폰트 사용)
+    try:    
+        font = ImageFont.truetype("arial.ttf", 40) # 폰트 크기 20
+    except :
+        font = ImageFont.load_default() 
+
+
+
     for obj in detection_data.get("objects", []): # detection data 에서 objects 를 리스트로 가져와서 개수만큼 반복
         rect = obj["rectangle"]
         x, y, w, h = rect["x"], rect["y"], rect["w"], rect["h"]
         draw.rectangle((x, y, x + w, y + h), outline="red", width=2) # 사각형 그리기 굵기 2
 
         label = obj["object"] # 객체 이름
-        draw.text((x, y), label, fill="red") # 객체 이름 텍스트로 그리기
+        draw.text((x, y), label, fill="red", font=font) # 객체 이름 텍스트로 그리기
 
     
     # save and modified image
