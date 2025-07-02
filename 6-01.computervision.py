@@ -1,10 +1,10 @@
 import requests
 import os
 from dotenv import load_dotenv
+from PIL import Image, ImageDraw, ImageFont
 
 # 환경변수 로드
 load_dotenv()
-
 
 def analyze_image(image_path):
     ENDPOINT_URL = os.getenv("ENDPOINT") + "vision/v3.2/analyze"
@@ -29,6 +29,7 @@ def analyze_image(image_path):
     else:
         print(f"Error : {response.status_code} - {response.text}")
         return None
+
     
 
 def main():
