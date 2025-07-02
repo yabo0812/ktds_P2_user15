@@ -72,8 +72,6 @@ def create_bounding_box(image_path, detection_data):
     except :
         font = ImageFont.load_default() 
 
-
-
     for obj in detection_data.get("objects", []): # detection data 에서 objects 를 리스트로 가져와서 개수만큼 반복
         rect = obj["rectangle"]
         x, y, w, h = rect["x"], rect["y"], rect["w"], rect["h"]
@@ -81,7 +79,6 @@ def create_bounding_box(image_path, detection_data):
 
         label = obj["object"] # 객체 이름
         draw.text((x, y), label, fill="red", font=font) # 객체 이름 텍스트로 그리기
-
     
     # save and modified image
     parts = image_path.rsplit('.',1)
@@ -95,30 +92,67 @@ def create_bounding_box(image_path, detection_data):
     print(f"Annotated image saved to {output_path}")
     image.show() # 이미지 보여주기
 
+# OCR function
+def ocr_image(image_path):
+    ENDPOINT_URL = os.getenv("ENDPOINT") + "vision/v3.2/ocr"
+
+
+    params = {"visualFeatures":"regin,line,word"}
+    headers = {
+        "Ocp-Apim-Subscription-Key":os.getenv("SUBSCRIPTION_KEY"),
+        "Content-Type":"application/octet-stream"
+    }
+    
+    try:
+        with open(image_path, "rb") as image_file:
+            image_data = image_file.read()
+    except Exception as e:
+        print(f"Error reading image file: {e}")
+        return None
+    
+    response = requests.post(ENDPOINT_URL, params=params, headers=headers, data=image_data)
+    if response.status_code == 200 :
+        ocrresult = response.json()
+        return ocrresult
+    else:
+        print(f"Error : {response.status_code} - {response.text}")
+        return None
+
 def main():
     image_path = input("Enter the path to the image file: ")
 
     print("1. Analyzing image.")
     print("2. Detecting objects in image.")
-    choice = input("Choose an option (1 or 2): ")
+    print("3. OCR (Optical Character Recognition) on image.")
+    choice = input("Choose an option (1 ~ 3): ")
 
     if choice == '1':
         print("Analysis Result: ")
-        result = analyze_image(image_path)        
+        result = analyze_image(image_path)      
+        print(result)  
     elif choice == '2':
         print("Object Detection Result: ")
         result = object_detection(image_path)
         if result:
             create_bounding_box(image_path, result)
+            print(result)
         else:
             print("No objects detected or an error occurred.")
+            return
+    elif choice == '3':
+        print("OCR Result: ")
+        result = ocr_image(image_path)
+        if result:
+            for region in result.get("regions", []):
+                for line in region.get("lines", []):
+                    line_text = " ".join([word["text"] for word in line.get("words", [])])
+                    print(line_text)
+        else:
+            print("No text detected or an error occurred.")
             return
     else:   
         print("Invalid choice. Please select 1 or 2.")
         return
-    
-    if result:
-        print(result)
-
+            
 if __name__ == "__main__" :
     main()
